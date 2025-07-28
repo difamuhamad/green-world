@@ -1,4 +1,11 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+useHead({
+  htmlAttrs: {
+    lang: 'en',
+    'data-theme': 'light',
+  },
+});
+</script>
 
 <template>
   <div>
