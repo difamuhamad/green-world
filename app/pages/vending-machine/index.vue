@@ -2,7 +2,7 @@
   <div class="min-h-screen">
     <!-- Camera Section -->
     <div
-      class="mx-auto w-4xl bg-white rounded-md border-2 border-sky-600 p-6 my-10"
+      class="mx-auto w-4xl bg-white rounded-md border-2 border-sky-600 p-6 my-10 mt-20"
     >
       <!-- Camera Preview -->
       <div class="relative w-full h-full bg-zinc-300 mb-8 overflow-hidden">

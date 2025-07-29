@@ -29,7 +29,10 @@
       </div>
     </header>
 
-    <div class="container mx-auto px-4 py-6 max-w-5xl">
+    <div v-if="isLoading" class="flex justify-center items-center min-h-screen">
+      <Loading />
+    </div>
+    <div v-else class="container mx-auto px-4 py-6 max-w-5xl">
       <h1 class="text-2xl md:text-3xl mb-6 font-bold">Profile</h1>
 
       <!-- Profile Section -->
@@ -96,7 +99,7 @@
               </div>
             </div>
             <button
-              class="w-10 h-10 bg-white rounded-lg border border-gray-300 flex items-center justify-center flex-shrink-0"
+              class="w-8 h-8 bg-white rounded-lg border border-gray-300 flex items-center justify-center flex-shrink-0"
             >
               <ChevronDown class="w-4 h-4 text-gray-500" />
             </button>
@@ -125,7 +128,7 @@
                     alt="Points"
                     class="w-5 h-5 mr-2"
                   />
-                  <span class="text-xl font-bold">{{ item.points }} Point</span>
+                  <span class="font-semibold">{{ item.points }} Point</span>
                 </div>
               </div>
             </div>
@@ -142,30 +145,54 @@
 </template>
 
 <script setup lang="ts">
-import { ChevronDown } from 'lucide-vue-next';
+import { ChevronDown, SkipBack } from 'lucide-vue-next';
+import { restoreUserFromSupabase } from '../../lib/restore-user';
+import type { RewardItem } from '../../types';
+const userData = useUserStore();
+
+const supabase = useSupabase();
+const isLoading = ref(true);
+const error = ref<string | null>(null);
+
+const rewardItems = ref<RewardItem[]>([]);
 
 definePageMeta({
   layout: false,
 });
 
-const userData = {
-  nama: 'Budiono Siregar',
-  email: 'budionosiregar@gmail.com',
-  domisili: 'Bandung',
-  badge: 'gold',
-  points: '230',
+const fetchRewardItem = async () => {
+  isLoading.value = true;
+  error.value = null;
+
+  try {
+    const { data, error: supabaseError } = await supabase
+      .from('reward_item')
+      .select('*');
+
+    if (supabaseError) {
+      throw new Error(supabaseError.message);
+    }
+
+    if (data) {
+      rewardItems.value = data.map((item) => ({
+        id: item.id,
+        name: item.nama_produk || 'Unknown Reward',
+        image: item.image_url || 'https://placehold.co/80x80',
+        points: item.point_price || '0',
+      }));
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Failed to load rewards';
+    console.error('Error fetching rewards:', err);
+  } finally {
+    isLoading.value = false;
+  }
 };
 
-const rewardItems = [
-  {
-    name: 'Beras 1kg',
-    image: 'https://placehold.co/80x80',
-    points: 20,
-  },
-  {
-    name: 'Minyak Goreng',
-    image: 'https://placehold.co/80x80',
-    points: 15,
-  },
-];
+onMounted(async () => {
+  await restoreUserFromSupabase();
+  await fetchRewardItem();
+});
 </script>

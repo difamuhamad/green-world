@@ -54,3 +54,90 @@ export interface SidebarData {
   teams: Team[];
   navMain: NavGroup[];
 }
+
+// Profile Types
+// Type Definitions
+export interface UserProfile {
+  id: string;
+  full_name: string;
+  email: string;
+  address: string;
+  badge_level: string;
+  points: number;
+  created_at: string;
+}
+
+export interface Transaction {
+  id: string;
+  email: string;
+  type: string;
+  status: TransactionStatus;
+  amount: string;
+  created_at: string;
+}
+
+export interface DisplayTransaction {
+  type: string;
+  date: string;
+  status: TransactionStatus;
+  amount: string;
+}
+
+export interface StatItem {
+  label: string;
+  value: string;
+  icon: any;
+}
+
+export interface UserData {
+  nama: string;
+  email: string;
+  points: string;
+  badge: string;
+}
+
+export interface RewardItem {
+  id: string;
+  name: string;
+  image: string;
+  points: string;
+}
+export interface UserData {
+  nama: string;
+  email: string;
+  points: string;
+  badge: string;
+}
+
+export interface RewardItem {
+  id: string;
+  name: string;
+  image: string;
+  points: string;
+}
+export interface UserData {
+  nama: string;
+  email: string;
+  points: string;
+  badge: string;
+}
+
+export interface RewardItem {
+  id: string;
+  name: string;
+  image: string;
+  points: string;
+}
+export interface UserData {
+  nama: string;
+  email: string;
+  points: string;
+  badge: string;
+}
+
+export interface RewardItem {
+  id: string;
+  name: string;
+  image: string;
+  points: string;
+}

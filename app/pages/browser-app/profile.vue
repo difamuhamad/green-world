@@ -1,6 +1,12 @@
 <template>
-  <div class="container mx-auto px-4 py-6 max-w-5xl">
-    <h1 class="text-2xl md:text-3xl mb-6 font-bold">Profile</h1>
+  <div
+    v-if="isLoading"
+    class="flex justify-center items-center mt-10 min-h-screen"
+  >
+    <Loading />
+  </div>
+  <div v-else class="container mx-auto px-4 py-6 max-w-5xl mt-15">
+    <h1 class="text-2xl md:text-2xl mb-6 font-bold">Profile</h1>
 
     <!-- Profile Section -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
@@ -18,8 +24,8 @@
           />
         </div>
         <div>
-          <h3 class="text-lg font-semibold">{{ userData.nama }}</h3>
-          <p class="text-gray-500 text-sm">{{ userData.email }}</p>
+          <h3 class="text-lg font-semibold">{{ userStore.nama }}</h3>
+          <p class="text-gray-500 text-sm">{{ userStore.email }}</p>
         </div>
       </div>
 
@@ -36,15 +42,17 @@
           <div class="flex items-center gap-1">
             <span class="text-base font-medium">Domisili:</span>
             <span class="text-primary-blue text-base font-medium">{{
-              userData.domisili
+              userStore.domisili
             }}</span>
           </div>
-          <p class="text-gray-500 text-sm mt-1">Bergabung sejak: 2025</p>
+          <p class="text-gray-500 text-sm mt-1">
+            Bergabung sejak: {{ userStore.join_year }}
+          </p>
         </div>
       </div>
 
       <!-- Badge Card -->
-      <BadgeCard :badge="userData.badge" />
+      <BadgeCard :badge="userStore.badge" />
 
       <!-- Points Card -->
       <div
@@ -57,7 +65,7 @@
         />
         <div>
           <p class="text-sm text-gray-600 mb-1">Total points:</p>
-          <h3 class="text-lg font-bold">+{{ userData.points }}</h3>
+          <h3 class="text-lg font-bold">+{{ userStore.points }}</h3>
         </div>
       </div>
 
@@ -79,7 +87,8 @@
 
       <!-- Logout Card -->
       <div
-        class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex items-center"
+        class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex items-center cursor-pointer"
+        @click="handleLogout"
       >
         <img
           src="/assets/images/exit-icon.png"
@@ -99,7 +108,9 @@
         class="flex items-center border border-gray-300 rounded-md px-3 py-1.5 w-full max-w-sm"
       >
         <Calendar class="w-4 h-4 mr-2 text-gray-500" />
-        <span class="text-sm text-gray-700">Mar 12, 2025 - Jul 11, 2025</span>
+        <span class="text-sm text-gray-700"
+          >Jul 27, 2025 - Agustus 20, 2025</span
+        >
       </div>
       <button class="bg-white border border-gray-300 rounded-md p-1.5">
         <ChevronDown class="w-4 h-4 text-gray-500" />
@@ -116,12 +127,12 @@
 
         <!-- Transaction History -->
         <TransHistory
-          v-for="(history, index) in historyData"
-          :key="index"
-          :title="history.title"
-          :email="history.email"
-          :status="history.status as TransactionStatus"
-          :amount="history.amount"
+          v-for="(transaction, index) in userTransactions"
+          :key="`transaction-${index}`"
+          :type="transaction.type"
+          :date="transaction.date"
+          :status="transaction.status"
+          :amount="transaction.amount"
         />
       </div>
 
@@ -138,7 +149,7 @@
               <p class="text-sm text-gray-600">{{ stat.label }}</p>
               <h3 class="text-lg font-bold mt-1">{{ stat.value }}</h3>
             </div>
-            <Recycle class="w-5 h-5 text-gray-500" />
+            <component :is="stat.icon" class="w-5 h-5 text-gray-500" />
           </div>
         </div>
       </div>
@@ -147,45 +158,154 @@
 </template>
 
 <script setup lang="ts">
-import { Calendar, ChevronDown, Recycle } from 'lucide-vue-next';
-import type { TransactionStatus } from '~/app/types';
+import { Calendar, ChevronDown, Coins, Recycle, Truck } from 'lucide-vue-next';
+import { useTransactionStats } from '../../stores/transaction-stats';
+import { useUserStore } from '../../stores/user-data';
+import type {
+  DisplayTransaction,
+  StatItem,
+  TransactionStatus,
+} from '../../types';
+import { logoutUser } from '../../lib/logout';
 
+// Component State
+const supabase = useSupabase();
+const isLoading = ref(true);
+const error = ref<Error | null>(null);
+
+const transactionStats = useTransactionStats();
+const userStore = useUserStore();
+const router = useRouter();
+
+const userTransactions = ref<DisplayTransaction[]>([]);
+const statsData = ref<StatItem[]>([
+  { label: 'Total Botol Plastik ditukar', value: '-', icon: Recycle },
+  { label: 'Total Pengambilan ', value: '-', icon: Truck },
+  { label: 'Total Point', value: '+', icon: Coins },
+]);
+
+// Helper Functions
+const formatDate = (dateString: string): string => {
+  return new Date(dateString).toLocaleDateString('id-ID', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+};
+
+// Data Fetching
+const fetchUserData = async () => {
+  isLoading.value = true;
+  error.value = null;
+
+  try {
+    // Get authenticated user
+    const {
+      data: { user: authUser },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !authUser) {
+      throw authError || new Error('User not authenticated');
+    }
+
+    // Fetch user profile
+    const { data: userData, error: userError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', authUser.id)
+      .single();
+
+    if (userError || !userData) {
+      throw userError || new Error('User profile not found');
+    }
+
+    // Update user data in global state
+    userStore.setUser({
+      nama: userData.full_name || 'Nama Pengguna',
+      email: authUser.email || '',
+      domisili: userData.address || 'Kota belum diatur',
+      badge: userData.badge_level || 'empty',
+      points: userData.points?.toString() || '0',
+      join_year: new Date(userData.created_at).getFullYear().toString(),
+    });
+
+    // Fetch transactions
+    const { data: transactions, error: transError } = await supabase
+      .from('transactions')
+      .select('*')
+      .eq('email', authUser.email)
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if (transError) {
+      console.warn('Error fetching transactions:', transError);
+    }
+
+    if (transactions) {
+      userTransactions.value = transactions.map((tx) => ({
+        type: tx.type || 'unknown',
+        date: formatDate(tx.created_at),
+        status: (tx.status as TransactionStatus) || 'pending',
+        amount: tx.amount_kg || '0',
+      }));
+
+      // Overall Stats
+      const totalAmount = transactions.reduce(
+        (sum, tx) => sum + (Number(tx.amount_kg) || 0),
+        0
+      );
+      const totalPoints = transactions.reduce(
+        (sum, tx) => sum + (Number(tx.points) || 0),
+        0
+      );
+      const totalPengambilan = transactions.filter(
+        (tx) => tx.type === 'Pengangkutan Kiloan'
+      ).length;
+
+      statsData.value = [
+        {
+          label: 'Total Botol Plastik ditukar',
+          value: `${totalAmount.toFixed(1)} kg`,
+          icon: Recycle,
+        },
+        {
+          label: 'Total Pengambilan',
+          value: `${totalPengambilan}`,
+          icon: Truck,
+        },
+        {
+          label: 'Total Point',
+          value: `+${totalPoints}`,
+          icon: Coins,
+        },
+      ];
+    }
+  } catch (err) {
+    console.error('Profile data error:', err);
+    error.value =
+      err instanceof Error
+        ? err
+        : new Error('Failed to load profile transaction');
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// Logout Handler
+const handleLogout = async () => {
+  isLoading.value = true;
+  await logoutUser(router);
+};
+
+// Lifecycle Hooks
+onMounted(async () => {
+  fetchUserData();
+  await transactionStats.fetchStats();
+});
+
+// Page Meta
 definePageMeta({
   layout: 'secondary-layout',
 });
-
-const userData = {
-  nama: 'Budiono Siregar',
-  email: 'budionosiregar@gmail.com',
-  domisili: 'Bandung',
-  badge: 'gold',
-  points: '230',
-};
-
-const historyData = [
-  {
-    title: 'Penukaran Botol Plastik',
-    email: 'ollivia.martin@email.com',
-    status: 'Selesai',
-    amount: '0.5 kg',
-  },
-  {
-    title: 'Pengangkutan Kiloan',
-    email: 'john.doe@email.com',
-    status: 'Sedang diproses',
-    amount: '2 kg',
-  },
-  {
-    title: 'Pengangkutan Kiloan',
-    email: 'john.doe@email.com',
-    status: 'Dibatalkan',
-    amount: '2 kg',
-  },
-];
-
-const statsData = [
-  { label: 'Botol Plastik ditukar', value: '+230' },
-  { label: 'Botol Plastik ditukar', value: '+230' },
-  { label: 'Botol Plastik ditukar', value: '+230' },
-];
 </script>

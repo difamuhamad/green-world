@@ -80,7 +80,7 @@ const data = {
     },
     {
       name: 'User Management',
-      url: '#',
+      url: '/browser-app/admin/dashboard/users',
       icon: User,
     },
   ],

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import OverviewChart from './OverviewChart.vue';
-import RecentTrans from './recent-trans.vue';
+import RecentTrans from './RecentTrans.vue';
 </script>
 
 <template>

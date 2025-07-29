@@ -9,8 +9,8 @@
         <Truck class="w-6 h-6 text-gray-600" />
       </div>
       <div>
-        <p class="font-semibold">{{ title }}</p>
-        <a href="#" class="text-gray-500 underline text-sm">{{ email }}</a>
+        <p class="font-semibold">{{ type }}</p>
+        <a href="#" class="text-gray-500 underline text-sm">{{ date }}</a>
       </div>
     </div>
     <div class="text-right">
@@ -24,7 +24,7 @@
       >
         {{ status }}
       </p>
-      <p class="font-semibold">{{ amount }}</p>
+      <p class="font-semibold">{{ amount }} kg</p>
     </div>
   </div>
 </template>
@@ -34,8 +34,8 @@ import { Truck } from 'lucide-vue-next';
 import type { TransactionStatus } from '../types';
 
 defineProps<{
-  title: string;
-  email: string;
+  type: string;
+  date: string;
   status: TransactionStatus;
   amount: string;
 }>();
