@@ -141,3 +141,45 @@ export interface RewardItem {
   image: string;
   points: string;
 }
+
+export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  phoneNumber: string;
+  status: 'active' | 'inactive' | 'invited' | 'suspended';
+  role: 'superadmin' | 'admin' | 'cashier' | 'manager';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Coordinate {
+  latitude: number;
+  longitude: number;
+}
+
+export interface Story {
+  lat?: number | null;
+  lon?: number | null;
+  [key: string]: any;
+}
+
+export interface Coordinate {
+  latitude: number;
+  longitude: number;
+}
+
+export interface PlaceNameResponse {
+  type: string;
+  query: [number, number];
+  features: {
+    place_name: string;
+    geometry: {
+      coordinates: [number, number];
+    };
+    [key: string]: any;
+  }[];
+  attribution: string;
+}

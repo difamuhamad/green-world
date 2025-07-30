@@ -3,12 +3,14 @@ import type { SidebarProps } from '../../ui/sidebar';
 
 import {
   AudioWaveform,
+  ChartNoAxesCombined,
   Command,
   GalleryVerticalEnd,
   Map,
-  PieChart,
+  MapPin,
   Settings2,
-  User,
+  ShoppingBasket,
+  Users,
 } from 'lucide-vue-next';
 
 import {
@@ -69,19 +71,29 @@ const data = {
   ],
   projects: [
     {
-      name: 'Chart Analytics',
-      url: '#',
-      icon: PieChart,
+      name: 'Monitoring',
+      url: '/browser-app/admin/dashboard',
+      icon: ChartNoAxesCombined,
     },
     {
       name: 'GIS Map',
-      url: '#',
+      url: '/browser-app/admin/dashboard/map',
       icon: Map,
+    },
+    {
+      name: 'Vending Machine',
+      url: '#',
+      icon: MapPin,
+    },
+    {
+      name: 'Point Store',
+      url: '#',
+      icon: ShoppingBasket,
     },
     {
       name: 'User Management',
       url: '/browser-app/admin/dashboard/users',
-      icon: User,
+      icon: Users,
     },
   ],
 };

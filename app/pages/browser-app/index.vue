@@ -78,10 +78,13 @@
         <div class="flex flex-col sm:flex-row gap-3 mb-6">
           <button
             type="submit"
-            class="bg-primary text-white text-base font-semibold h-12 rounded-2xl flex-1 hover:bg-primary-dark transition-colors"
+            class="bg-primary text-white text-base font-semibold h-12 rounded-2xl flex-1 transition-colors"
+            :class="{ 'opacity-50 cursor-not-allowed': isSubmitting }"
+            :disabled="isSubmitting"
           >
-            Masuk
+            {{ isSubmitting ? 'Signing in...' : 'Masuk' }}
           </button>
+
           <button
             type="button"
             class="text-primary text-base font-semibold h-12 rounded-2xl flex-1 border border-primary hover:bg-gray-50 transition-colors"

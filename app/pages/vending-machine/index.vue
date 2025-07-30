@@ -1,6 +1,5 @@
 <template>
   <div class="min-h-screen">
-    <!-- Camera Section -->
     <div
       class="mx-auto w-4xl bg-white rounded-md border-2 border-sky-600 p-6 my-10 mt-20"
     >
@@ -17,13 +16,13 @@
           v-if="!isCameraActive"
           class="absolute inset-0 flex items-center justify-center bg-black"
         >
-          <p class="text-white text-xl">Kamera dimatikan</p>
+          <p class="text-white">Kamera dimatikan</p>
         </div>
       </div>
 
       <!-- Detection Result -->
       <div class="mb-8">
-        <h3 class="font-medium text-center mb-4">Botol Plastik terdeteksi:</h3>
+        <h3 class="font-medium text-left mb-4">Botol Plastik terdeteksi:</h3>
         <div
           class="w-full h-32 bg-white rounded-2xl shadow-sm border border-gray-200"
         >
@@ -37,7 +36,7 @@
       <div class="flex justify-between items-center">
         <button
           @click="toggleCamera"
-          class="text-xl flex items-center gap-2 text-primary-blue hover:underline"
+          class="flex items-center gap-2 text-primary-blue hover:underline rounded border border-gray p-2"
         >
           <CameraOff v-if="isCameraActive" class="w-5 h-5" />
           <Camera v-else class="w-5 h-5" />
@@ -46,14 +45,11 @@
 
         <Button
           @click="processImage"
-          class="w-36 h-16 rounded-2xl shadow-sm text-xl font-bold"
+          class="rounded-2xl shadow-sm font-bold"
           :disabled="isCameraActive"
         >
-          Selesai →
+          Deteksi Objek →
         </Button>
-        <h2 class="text-center my-2">
-          Pastikan seluruh botol plastik terlihat pada camera
-        </h2>
       </div>
     </div>
   </div>

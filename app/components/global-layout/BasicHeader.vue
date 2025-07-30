@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { cn } from '~/app/lib/utils';
+import { cn } from '../../lib/utils';
 
-import type { LayoutHeaderProps } from '~/app/types';
+import type { LayoutHeaderProps } from '../../types';
 
 defineProps<LayoutHeaderProps>();
 </script>

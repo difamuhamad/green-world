@@ -2,6 +2,7 @@
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineNuxtConfig({
+  ssr: false,
   supabase: {
     redirect: false,
     url: process.env.SUPABASE_URL,
@@ -12,6 +13,7 @@ export default defineNuxtConfig({
     public: {
       supabaseUrl: process.env.SUPABASE_URL,
       supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
+      mapTilerApiKey: process.env.MAP_SERVICE_API_KEY,
     },
   },
   compatibilityDate: '2025-07-15',

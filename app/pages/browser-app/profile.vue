@@ -152,6 +152,7 @@
             <component :is="stat.icon" class="w-5 h-5 text-gray-500" />
           </div>
         </div>
+        <h2 class="font-semibold">*Total dari data terakhir bulan ini</h2>
       </div>
     </div>
   </div>

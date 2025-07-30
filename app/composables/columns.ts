@@ -1,17 +1,22 @@
 import { h } from 'vue';
-import Badge from '~/app/components/ui/badge/Badge.vue';
-import Checkbox from '~/app/components/ui/checkbox/Checkbox.vue';
+import Badge from '../components/ui/badge/Badge.vue';
+import Checkbox from '../components/ui/checkbox/Checkbox.vue';
 import { format } from 'date-fns';
-import {
-  HeaderContext,
-  ColumnDef,
+import type {
   CellContext,
+  ColumnDef,
+  HeaderContext,
   Row,
 } from '@tanstack/vue-table';
+// import {
+//   HeaderContext,
+//   ColumnDef,
+//   CellContext,
+//   Row,
+// } from '@tanstack/vue-table';
 
-// Definisikan tipe User sesuai dengan struktur data kita
 export type User = {
-  id: string; // Ubah dari number ke string
+  id: string;
   email: string;
   role: 'superadmin' | 'admin' | 'cashier' | 'manager';
   status: 'active' | 'inactive' | 'invited' | 'suspended';
