@@ -11,35 +11,29 @@
         </h1>
 
         <!-- Camera Preview -->
-        <div
-          class="w-full aspect-video bg-gray-200 rounded-lg overflow-hidden mb-8"
-        >
-          <!-- Video Feed -->
+        <div class="relative w-full aspect-video">
+          <!-- Video Preview -->
           <video
             ref="videoRef"
             autoplay
             playsinline
-            class="inset-0 w-full h-full object-cover"
+            class="absolute inset-0 w-full h-full object-cover"
             v-show="isCameraActive"
           ></video>
 
-          <!-- Canvas for Detection -->
-          <canvas ref="canvasRef" class="inset-0 w-full h-full"></canvas>
+          <!-- Canvas Detection -->
+          <canvas
+            ref="canvasRef"
+            class="absolute inset-0 w-full h-full object-cover"
+            v-show="isCameraActive"
+          ></canvas>
 
-          <!-- Frozen Canvas for Results -->
+          <!-- Frozen Result -->
           <canvas
             ref="frozenCanvasRef"
-            class="inset-0 w-full h-full"
+            class="absolute inset-0 w-full h-full object-cover"
             v-show="!isCameraActive"
-          />
-
-          <!-- Camera Off State -->
-          <div
-            v-if="!isCameraActive"
-            class="inset-0 flex items-center justify-center bg-black bg-opacity-70"
-          >
-            <p class="text-white text-xl">Camera is off</p>
-          </div>
+          ></canvas>
         </div>
 
         <!-- Detection Results -->
@@ -207,33 +201,52 @@ const toggleCamera = () => {
 
 // process image and run model
 const processImage = async () => {
+  if (!model || !videoRef.value || !canvasRef.value || !frozenCanvasRef.value) {
+    alert('Model atau elemen belum siap.');
+    return;
+  }
+
   isLoading.value = true;
 
-  if (!model || !videoRef.value || !canvasRef.value || !frozenCanvasRef.value)
-    return;
-
-  const video = videoRef.value;
-  const canvas = canvasRef.value;
-  const frozenCanvas = frozenCanvasRef.value;
-  const ctxFrozen = frozenCanvas.getContext('2d');
-
-  frozenCanvas.width = canvas.width;
-  frozenCanvas.height = canvas.height;
-
-  // Freeze image in canvas
-  ctxFrozen.drawImage(video, 0, 0, frozenCanvas.width, frozenCanvas.height);
-
-  isCameraActive.value = false;
-
-  const inputTensor = tf.browser
-    .fromPixels(frozenCanvas)
-    .resizeBilinear([640, 640])
-    .toFloat()
-    .div(255.0)
-    .expandDims(0)
-    .transpose([0, 3, 1, 2]);
-
   try {
+    const video = videoRef.value;
+    const canvas = canvasRef.value;
+    const frozenCanvas = frozenCanvasRef.value;
+
+    if (video.readyState < 2) {
+      await new Promise((resolve) => {
+        video.onloadeddata = () => resolve();
+      });
+    }
+
+    const width = video.videoWidth;
+    const height = video.videoHeight;
+
+    canvas.width = frozenCanvas.width = width;
+    canvas.height = frozenCanvas.height = height;
+
+    const ctxFrozen = frozenCanvas.getContext('2d');
+
+    // Bekukan frame dari video
+    ctxFrozen.drawImage(video, 0, 0, width, height);
+
+    // Hentikan kamera
+    stopCamera();
+
+    // Tampilkan hasil beku
+    await nextTick();
+    isCameraActive.value = false;
+
+    // Preprocess image untuk TensorFlow
+    const inputTensor = tf.browser
+      .fromPixels(frozenCanvas)
+      .resizeBilinear([640, 640])
+      .toFloat()
+      .div(255.0)
+      .expandDims(0)
+      .transpose([0, 3, 1, 2]);
+
+    // Jalankan model
     const output = await model.executeAsync({ images: inputTensor });
     const predictions = (await output.array())[0];
 
@@ -251,9 +264,9 @@ const processImage = async () => {
       }
     }
 
-    // box in frozen canvas
-    const scaleX = frozenCanvas.width / 640;
-    const scaleY = frozenCanvas.height / 640;
+    // Gambar hasil deteksi
+    const scaleX = width / 640;
+    const scaleY = height / 640;
 
     ctxFrozen.strokeStyle = 'red';
     ctxFrozen.lineWidth = 2;
@@ -270,15 +283,7 @@ const processImage = async () => {
       ctxFrozen.fillText(label, x0 * scaleX + 4, y0 * scaleY + 18);
     });
 
-    detectionResult.value =
-      detectedBoxes.length > 0
-        ? `Terdeteksi ${detectedBoxes.length} objek: ${detectedBoxes
-            .map((det) => labels[det.classId])
-            .join(', ')}`
-        : 'Tidak ada objek terdeteksi.';
-
-    tf.dispose([output, inputTensor]);
-
+    // Hitung hasil
     const jumlahTiapTipe = {};
     detectedBoxes.forEach((det) => {
       const label = labels[det.classId];
@@ -286,7 +291,6 @@ const processImage = async () => {
       jumlahTiapTipe[label]++;
     });
 
-    // transform to shape
     detectionResult.value = Object.entries(jumlahTiapTipe).map(
       ([tipe, jumlah]) => ({
         tipe,
@@ -294,11 +298,11 @@ const processImage = async () => {
         berat: (jumlah * bottleWeight[tipe]).toFixed(2),
       })
     );
-    console.log('Hasil Deteksi:', detectionResult);
-    stopCamera();
-    isLoading.value = false;
+
+    tf.dispose([output, inputTensor]);
   } catch (err) {
-    console.error('Model execution error:', err);
+    console.error('Error saat proses deteksi:', err);
+    alert('Gagal mendeteksi objek.');
   } finally {
     isLoading.value = false;
   }
@@ -306,8 +310,13 @@ const processImage = async () => {
 
 onMounted(async () => {
   await restoreUserFromSupabase();
-  if (!userStore.id) {
-    router.push('/browser-app');
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (session) {
+    router.push('/browser-app/profile');
   }
 
   console.log('Loading model...');
