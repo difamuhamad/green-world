@@ -1,21 +1,23 @@
 <template>
   <div class="flex flex-col items-center py-8">
     <!-- Logo dan Judul -->
-    <div class="flex flex-col items-center mb-12">
-      <div class="flex">
-        <img
-          src="/assets/images/main-logo.svg"
-          alt="main-logo"
-          class="w-16 h-16 mb-4"
-        />
-        <div class="text-center text-primary">
-          <h1 class="text-4xl font-bold mb-2">GREEN WORLD RECYCLE</h1>
-          <h2 class="text-xl font-normal text-gray-600">
-            Lingkungan Bersih, Kita Sehat
-          </h2>
+    <NuxtLink to="/about">
+      <div class="flex flex-col items-center mb-12">
+        <div class="flex">
+          <img
+            src="/assets/images/main-logo.svg"
+            alt="main-logo"
+            class="w-16 h-16 mb-4"
+          />
+          <div class="text-center text-primary">
+            <h1 class="text-4xl font-bold mb-2">GREEN WORLD RECYCLE</h1>
+            <h2 class="text-xl font-normal text-gray-600">
+              Lingkungan Bersih, Kita Sehat
+            </h2>
+          </div>
         </div>
       </div>
-    </div>
+    </NuxtLink>
 
     <!-- Cards -->
     <div class="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto px-4">

@@ -6,18 +6,20 @@
         alt="Logo"
         class="w-8 h-12 mr-3"
       />
-      <div>
-        <h1 class="text-xl font-bold text-primary">GREEN WORLD</h1>
-        <p class="text-sm font-normal text-primary">
-          Lingkungan Bersih, Kita Sehat
-        </p>
-      </div>
-      <nuxt-link to="/" class="ml-auto">
+      <NuxtLink to="/about">
+        <div>
+          <h1 class="text-xl font-bold text-primary">GREEN WORLD</h1>
+          <p class="text-sm font-normal text-primary">
+            Lingkungan Bersih, Kita Sehat
+          </p>
+        </div>
+      </NuxtLink>
+      <NuxtLink to="/" class="ml-auto">
         <Button class="flex items-center gap-1 transition-colors">
           <SkipBack :size="18" :stroke-width="2" />
           Kembali
         </Button>
-      </nuxt-link>
+      </NuxtLink>
     </div>
   </header>
 </template>
