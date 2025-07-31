@@ -51,8 +51,8 @@
             />
           </div>
           <div>
-            <h3 class="text-lg font-semibold">{{ userData.nama }}</h3>
-            <p class="text-gray-500 text-sm">{{ userData.email }}</p>
+            <h3 class="text-lg font-semibold">{{ userStore.nama }}</h3>
+            <p class="text-gray-500 text-sm">{{ userStore.email }}</p>
           </div>
         </div>
 
@@ -67,12 +67,12 @@
           />
           <div>
             <p class="text-sm text-gray-600 mb-1">Total points:</p>
-            <h3 class="text-lg font-bold">+{{ userData.points }}</h3>
+            <h3 class="text-lg font-bold">+{{ userStore.points }}</h3>
           </div>
         </div>
 
         <!-- Badge Card -->
-        <BadgeCard :badge="userData.badge" />
+        <BadgeCard :badge="userStore.badge" />
       </div>
 
       <!-- Exchange Section -->
@@ -148,7 +148,7 @@
 import { ChevronDown, SkipBack } from 'lucide-vue-next';
 import { restoreUserFromSupabase } from '../../lib/restore-user';
 import type { RewardItem } from '../../types';
-const userData = useUserStore();
+const userStore = useUserStore();
 
 const supabase = useSupabase();
 const isLoading = ref(true);

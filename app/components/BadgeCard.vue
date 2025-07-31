@@ -22,7 +22,7 @@ const props = defineProps<{
 }>();
 
 const badgeImage = computed(() => {
-  switch (props.badge.toLowerCase()) {
+  switch (props.badge) {
     case 'gold':
       return badgeGold;
     case 'diamond':

@@ -160,13 +160,14 @@
 <script setup lang="ts">
 import { Calendar, ChevronDown, Coins, Recycle, Truck } from 'lucide-vue-next';
 import { useTransactionStats } from '../../stores/transaction-stats';
-import { useUserStore } from '../../stores/user-data';
+import { useUserStore } from '../../stores/user-profile';
 import type {
   DisplayTransaction,
   StatItem,
   TransactionStatus,
 } from '../../types';
 import { logoutUser } from '../../lib/logout';
+import { getUserBadge } from '~/lib/utils';
 
 // Component State
 const supabase = useSupabase();
@@ -181,7 +182,7 @@ const userTransactions = ref<DisplayTransaction[]>([]);
 const statsData = ref<StatItem[]>([
   { label: 'Total Botol Plastik ditukar', value: '-', icon: Recycle },
   { label: 'Total Pengambilan ', value: '-', icon: Truck },
-  { label: 'Total Point', value: '+', icon: Coins },
+  { label: 'Total Point diperoleh', value: '+', icon: Coins },
 ]);
 
 // Helper Functions
@@ -211,7 +212,7 @@ const fetchUserData = async () => {
 
     // Fetch user profile
     const { data: userData, error: userError } = await supabase
-      .from('users')
+      .from('user_profile')
       .select('*')
       .eq('id', authUser.id)
       .single();
@@ -220,13 +221,24 @@ const fetchUserData = async () => {
       throw userError || new Error('User profile not found');
     }
 
+    const { data: userStats, error: errorStats } = await supabase
+      .from('user_data')
+      .select('*')
+      .eq('id', userData.id)
+      .single();
+
+    if (errorStats || !userStats) {
+      throw userError || new Error('User data is not found');
+    }
+
     // Update user data in global state
     userStore.setUser({
+      id: userData.id || '',
       nama: userData.full_name || 'Nama Pengguna',
       email: authUser.email || '',
       domisili: userData.address || 'Kota belum diatur',
-      badge: userData.badge_level || 'empty',
-      points: userData.points?.toString() || '0',
+      badge: getUserBadge(userStats.exp_level) || 'empty',
+      points: userStats.point || '0',
       join_year: new Date(userData.created_at).getFullYear().toString(),
     });
 
@@ -250,15 +262,6 @@ const fetchUserData = async () => {
         amount: tx.amount_kg || '0',
       }));
 
-      // Overall Stats
-      const totalAmount = transactions.reduce(
-        (sum, tx) => sum + (Number(tx.amount_kg) || 0),
-        0
-      );
-      const totalPoints = transactions.reduce(
-        (sum, tx) => sum + (Number(tx.points) || 0),
-        0
-      );
       const totalPengambilan = transactions.filter(
         (tx) => tx.type === 'Pengangkutan Kiloan'
       ).length;
@@ -266,7 +269,7 @@ const fetchUserData = async () => {
       statsData.value = [
         {
           label: 'Total Botol Plastik ditukar',
-          value: `${totalAmount.toFixed(1)} kg`,
+          value: `${userStats.total_weight} kg`,
           icon: Recycle,
         },
         {
@@ -275,8 +278,8 @@ const fetchUserData = async () => {
           icon: Truck,
         },
         {
-          label: 'Total Point',
-          value: `+${totalPoints}`,
+          label: 'Total Point diperoleh',
+          value: `+${userStats.point}`,
           icon: Coins,
         },
       ];

@@ -2,6 +2,13 @@
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineNuxtConfig({
+  app: {
+    head: {
+      title: 'GREEN WORLD',
+      meta: [{ name: 'dicoding:email', content: 'difamuhamad06@gmail.com' }],
+    },
+  },
+  ssr: false,
   supabase: {
     redirect: false,
     url: process.env.SUPABASE_URL,
@@ -12,6 +19,7 @@ export default defineNuxtConfig({
     public: {
       supabaseUrl: process.env.SUPABASE_URL,
       supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
+      mapTilerApiKey: process.env.MAP_SERVICE_API_KEY,
     },
   },
   compatibilityDate: '2025-07-15',
