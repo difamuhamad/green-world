@@ -2,6 +2,12 @@
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineNuxtConfig({
+  app: {
+    head: {
+      title: 'GREEN WORLD',
+      meta: [{ name: 'dicoding:email', content: 'difamuhamad06@gmail.com' }],
+    },
+  },
   ssr: false,
   supabase: {
     redirect: false,

@@ -1,5 +1,5 @@
 import { useRouter } from 'vue-router';
-import { useUserStore } from '../stores/user-data';
+import { useUserStore } from '../stores/user-profile';
 
 export const logoutUser = async (router: ReturnType<typeof useRouter>) => {
   const supabase = useSupabase();
