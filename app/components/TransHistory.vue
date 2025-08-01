@@ -6,7 +6,12 @@
       <div
         class="bg-gray-200 rounded-full w-12 h-12 flex items-center justify-center mr-4"
       >
-        <Truck class="w-6 h-6 text-gray-600" />
+        <div v-if="type === 'Pengangkutan Kiloan'">
+          <Truck class="w-6 h-6 text-gray-600" />
+        </div>
+        <div v-else>
+          <Recycle class="w-6 h-6 text-gray-600" />
+        </div>
       </div>
       <div>
         <p class="font-semibold">{{ type }}</p>
@@ -30,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { Truck } from 'lucide-vue-next';
+import { Truck, Recycle } from 'lucide-vue-next';
 import type { TransactionStatus } from '../types';
 
 defineProps<{

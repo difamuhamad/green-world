@@ -31,3 +31,9 @@ export const userSchema = z.object({
 export type User = z.infer<typeof userSchema>;
 
 export const userListSchema = z.array(userSchema);
+
+export interface DetectionItem {
+  tipe: string;
+  jumlah: number;
+  berat: string;
+}
