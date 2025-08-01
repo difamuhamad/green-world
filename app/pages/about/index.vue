@@ -3,12 +3,12 @@
   <div class="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
     <!-- Hero Section -->
     <section
-      class="relative bg-[url('/images/green-world-thumbnail.jpg')] bg-cover bg-center bg-no-repeat text-white min-h-screen"
+      class="relative bg-[url('/images/green-world-thumbnail1.jpg')] bg-cover bg-center bg-no-repeat text-white min-h-screen"
     >
       <div class="absolute inset-0 bg-black/10"></div>
       <div class="relative container mx-auto px-4 py-20 lg:py-32">
         <div class="max-w-4xl mx-auto text-center">
-          <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+          <h1 class="text-4xl md:text-6xl font-bold mt-15 mb-6 leading-tight">
             Langkah Kecilmu, adalah Nafas Panjang untuk
             <span class="text-green-200">Bumi</span>
           </h1>
@@ -31,9 +31,8 @@
               Our Mission
             </h2>
             <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Kami percaya dalam menciptakan masa depan yang berkelanjutan di
-              mana setiap sampah menemukan tujuannya, dan setiap individu
-              memiliki kekuatan untuk membuat dampak lingkungan.
+              Menciptakan masa depan yang berkelanjutan di mana setiap individu
+              memiliki kemudahan untuk membuat dampak positif pada lingkungan.
             </p>
           </div>
 
@@ -43,19 +42,7 @@
                 <div
                   class="w-12 h-12 bg-[#87B844] rounded-full flex items-center justify-center flex-shrink-0"
                 >
-                  <svg
-                    class="w-6 h-6 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                    ></path>
-                  </svg>
+                  <Sprout class="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h3 class="text-xl font-semibold text-gray-800 mb-2">
@@ -74,28 +61,16 @@
                 <div
                   class="w-12 h-12 bg-[#2192D1] rounded-full flex items-center justify-center flex-shrink-0"
                 >
-                  <svg
-                    class="w-6 h-6 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                    ></path>
-                  </svg>
+                  <MonitorCog class="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h3 class="text-xl font-semibold text-gray-800 mb-2">
-                    Community Impact
+                    Data-Driven Sustainability
                   </h3>
                   <p class="text-gray-600">
-                    Bergabunglah dengan orang-orang yang memiliki minat yang
-                    sama dan ciptakan efek domino perubahan lingkungan yang
-                    positif di komunitas Anda.
+                    Kelola dan pantau upaya daur ulang secara real-time. Sistem
+                    kami mengubah setiap transaksi di RVM menjadi data yang
+                    dapat diukur, dianalisis, dan dilaporkan.
                   </p>
                 </div>
               </div>
@@ -104,19 +79,7 @@
                 <div
                   class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0"
                 >
-                  <svg
-                    class="w-6 h-6 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M13 10V3L4 14h7v7l9-11h-7z"
-                    ></path>
-                  </svg>
+                  <Cpu class="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h3 class="text-xl font-semibold text-gray-800 mb-2">
@@ -163,33 +126,14 @@
               <div
                 class="w-16 h-16 bg-[#87B844] rounded-2xl flex items-center justify-center mb-6"
               >
-                <svg
-                  class="w-8 h-8 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                  ></path>
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                  ></path>
-                </svg>
+                <Camera class="w-8 h-8 text-white" />
               </div>
               <h3 class="text-2xl font-bold text-gray-800 mb-4">
-                Smart Recognition
+                Smart Detection
               </h3>
               <p class="text-gray-600 leading-relaxed">
-                Cukup ambil foto barang apa pun, dan AI kami akan langsung
-                mengidentifikasi metode daur ulang terbaik dan lokasi penukaran
-                terdekat.
+                Deteksi objek botol plastik dan laninnya untuk memilah sampah
+                dan juga menghitung estimasi jumlah berat
               </p>
             </div>
 
@@ -199,32 +143,12 @@
               <div
                 class="w-16 h-16 bg-[#2192D1] rounded-2xl flex items-center justify-center mb-6"
               >
-                <svg
-                  class="w-8 h-8 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  ></path>
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  ></path>
-                </svg>
+                <MapPin class="w-8 h-8 text-white" />
               </div>
-              <h3 class="text-2xl font-bold text-gray-800 mb-4">
-                Location Finder
-              </h3>
+              <h3 class="text-2xl font-bold text-gray-800 mb-4">GIS Map</h3>
               <p class="text-gray-600 leading-relaxed">
-                Temukan pusat daur ulang terdekat, titik penitipan, dan jadwal
-                pengumpulan di wilayah Anda dengan pembaruan real-time.
+                Map interaktif yang menampilkan lokasi RVM (reverse vending
+                machine) pada setiap kota atau provinsi
               </p>
             </div>
 
@@ -234,27 +158,14 @@
               <div
                 class="w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center mb-6"
               >
-                <svg
-                  class="w-8 h-8 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-                  ></path>
-                </svg>
+                <Gift class="w-8 h-8 text-white" />
               </div>
               <h3 class="text-2xl font-bold text-gray-800 mb-4">
                 Reward System
               </h3>
               <p class="text-gray-600 leading-relaxed">
                 Dapatkan poin untuk setiap barang yang didaur ulang dan tukarkan
-                poin tersebut dengan produk ramah lingkungan, diskon, dan hadiah
-                eksklusif.
+                poin tersebut dengan produk, diskon, dan hadiah eksklusif
               </p>
             </div>
           </div>
@@ -272,11 +183,11 @@
       <div class="container mx-auto px-4">
         <div class="max-w-4xl mx-auto text-center">
           <h2 class="text-4xl md:text-5xl font-bold mb-6">
-            Siap untuk memulai perubahan?
+            Bersama Membangun Masa Depan Tanpa Sampah Plastik
           </h2>
           <p class="text-xl mb-8 opacity-90 leading-relaxed">
-            Bergabunglah dengan komunitas pejuang lingkungan kami dan mulailah
-            perjalanan Anda menuju masa depan yang lebih berkelanjutan hari ini.
+            Bangun citra positif dan dampak nyata dengan mengadopsi teknologi
+            daur ulang cerdas.
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <NuxtLink to="/vending-machine">
@@ -308,7 +219,7 @@
               <h3 class="text-2xl font-bold mb-4 text-[#87B844]">
                 GREEN WORLD
               </h3>
-              <p class="text-gray-300 mb-4 leading-relaxed">
+              <p class="text-gray-300 mb-8 leading-relaxed">
                 Mengubah cara dunia memandang limbah, satu barang daur ulang
                 pada satu waktu. Bersama-sama, kita sedang membangun masa depan
                 yang berkelanjutan untuk generasi mendatang.
@@ -338,10 +249,13 @@
             <div>
               <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
               <ul class="space-y-2 text-gray-300">
-                <NuxtLink to="/browser-app"> </NuxtLink>
-                <li>Home</li>
+                <NuxtLink to="/browser-app">
+                  <li class="hover:text-[#87B844] transition-colors">Home</li>
+                </NuxtLink>
                 <NuxtLink to="/vending-machine">
-                  <li>Vending Machine Demo</li>
+                  <li class="hover:text-[#87B844] transition-colors">
+                    RVM Demo
+                  </li>
                 </NuxtLink>
               </ul>
             </div>
@@ -376,7 +290,18 @@
 </template>
 
 <script setup>
-import { Github, Instagram } from 'lucide-vue-next';
+import {
+  Camera,
+  Cpu,
+  Flashlight,
+  Gift,
+  Github,
+  Instagram,
+  MapPin,
+  MonitorCog,
+  Sprout,
+  Users,
+} from 'lucide-vue-next';
 import { onMounted } from 'vue';
 import Header from '~/components/header/Header.vue';
 

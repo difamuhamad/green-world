@@ -86,17 +86,36 @@
       </NuxtLink>
 
       <!-- Logout Card -->
-      <div
-        class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex items-center cursor-pointer"
-        @click="handleLogout"
-      >
-        <img
-          src="/assets/images/exit-icon.png"
-          alt="Logout"
-          class="w-10 h-10 mr-3"
-        />
-        <h3 class="text-base font-medium">Keluarkan Akun</h3>
-      </div>
+      <AlertDialog v-model:open="isDialogOpen">
+        <AlertDialogTrigger as-child>
+          <div
+            class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex items-center cursor-pointer"
+          >
+            <img
+              src="/assets/images/exit-icon.png"
+              alt="Logout"
+              class="w-10 h-10 mr-3"
+            />
+            <h3 class="text-base font-medium">Keluarkan Akun</h3>
+          </div>
+        </AlertDialogTrigger>
+
+        <AlertDialogContent>
+          <AlertDialogTitle>Yakin ingin keluar?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Anda akan dikeluarkan dari akun ini dan harus login kembali untuk
+            mengakses layanan.
+          </AlertDialogDescription>
+          <AlertDialogFooter>
+            <AlertDialogCancel @click="isDialogOpen = false"
+              >Batal</AlertDialogCancel
+            >
+            <AlertDialogAction @click="handleLogout">
+              Keluar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
 
     <!-- Dashboard Section -->
@@ -162,6 +181,16 @@
 import { Calendar, ChevronDown, Coins, Recycle, Truck } from 'lucide-vue-next';
 import { useTransactionStats } from '../../stores/transaction-stats';
 import { useUserStore } from '../../stores/user-profile';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '~/components/ui/alert-dialog';
 import type {
   DisplayTransaction,
   StatItem,
@@ -174,7 +203,7 @@ import { getUserBadge } from '~/lib/utils';
 const supabase = useSupabase();
 const isLoading = ref(true);
 const error = ref<Error | null>(null);
-
+const isDialogOpen = ref(false);
 const transactionStats = useTransactionStats();
 const userStore = useUserStore();
 const router = useRouter();

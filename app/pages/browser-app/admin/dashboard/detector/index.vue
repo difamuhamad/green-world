@@ -1,8 +1,11 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-8 px-4 mt-10">
+  <BasicPage
+    title="Realtime Detector"
+    description="Plastic bottle bbject detection with tensorflowjs"
+  >
     <!-- Main Container -->
     <div
-      class="mx-auto max-w-4xl bg-white rounded-xl shadow-md overflow-hidden border border-sky-200"
+      class="mx-auto max-w-4xl bg-white rounded-xl shadow-md overflow-hidden border border-gray-400"
     >
       <!-- Camera Section -->
       <div class="p-6">
@@ -92,9 +95,7 @@
               </div>
             </div>
 
-            <div v-if="detectionResult.length">
-              <TransButton :detectionResult="detectionResult" />
-            </div>
+            <div v-if="detectionResult.length"></div>
           </div>
         </div>
 
@@ -126,13 +127,9 @@
             <ScanSearch />
           </Button>
         </div>
-
-        <p class="text-center text-gray-500 mt-4">
-          Pastikan seluruh botol plastik terlihat pada camera
-        </p>
       </div>
     </div>
-  </div>
+  </BasicPage>
 </template>
 
 <script setup>
@@ -140,7 +137,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { Camera, CameraOff, ScanSearch } from 'lucide-vue-next';
 import * as tf from '@tensorflow/tfjs';
 import { bottleWeight } from '~/data/object-data';
-import { restoreUserFromSupabase } from '~/lib/restore-user';
+import BasicPage from '~/components/global-layout/BasicPage.vue';
 
 const videoRef = ref(null);
 const isCameraActive = ref(false);
@@ -148,13 +145,11 @@ const labels = ['gelas-plastik', 'botol-plastik-kecil', 'botol-plastik-besar'];
 const canvasRef = ref(null);
 const frozenCanvasRef = ref(null);
 const detectionResult = ref([]);
-const userStore = useUserStore();
-const router = useRouter();
-const supabase = useSupabase();
 
 let isLoading = ref(false);
 let stream = null;
 let model = null; // tensorflow model
+let detectLoopId = null;
 
 const startCamera = async () => {
   try {
@@ -180,6 +175,7 @@ const startCamera = async () => {
         frozenCanvasRef.value.width = width;
         frozenCanvasRef.value.height = height;
       }
+      detectFrame(); // detect while camera is opening
     };
   } catch (err) {
     console.error('Error accessing camera:', err);
@@ -228,17 +224,13 @@ const processImage = async () => {
 
     const ctxFrozen = frozenCanvas.getContext('2d');
 
-    // Bekukan frame dari video
     ctxFrozen.drawImage(video, 0, 0, width, height);
 
-    // Hentikan kamera
     stopCamera();
 
-    // Tampilkan hasil beku
     await nextTick();
     isCameraActive.value = false;
 
-    // Preprocess image untuk TensorFlow
     const inputTensor = tf.browser
       .fromPixels(frozenCanvas)
       .resizeBilinear([640, 640])
@@ -247,7 +239,6 @@ const processImage = async () => {
       .expandDims(0)
       .transpose([0, 3, 1, 2]);
 
-    // Jalankan model
     const output = await model.executeAsync({ images: inputTensor });
     const predictions = (await output.array())[0];
 
@@ -265,7 +256,6 @@ const processImage = async () => {
       }
     }
 
-    // Gambar hasil deteksi
     const scaleX = width / 640;
     const scaleY = height / 640;
 
@@ -284,7 +274,6 @@ const processImage = async () => {
       ctxFrozen.fillText(label, x0 * scaleX + 4, y0 * scaleY + 18);
     });
 
-    // Hitung hasil
     const jumlahTiapTipe = {};
     detectedBoxes.forEach((det) => {
       const label = labels[det.classId];
@@ -309,17 +298,79 @@ const processImage = async () => {
   }
 };
 
-onMounted(async () => {
-  await restoreUserFromSupabase();
+const detectFrame = async () => {
+  if (!model || !videoRef.value || !canvasRef.value) return;
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const video = videoRef.value;
+  const canvas = canvasRef.value;
+  const ctx = canvas.getContext('2d');
 
-  if (!session) {
-    router.push('/browser-app/profile');
+  const inputTensor = tf.browser
+    .fromPixels(video)
+    .resizeBilinear([640, 640])
+    .toFloat()
+    .div(255.0)
+    .expandDims(0)
+    .transpose([0, 3, 1, 2]);
+
+  try {
+    console.log('Detecting object...');
+    const output = await model.executeAsync({ images: inputTensor });
+    const predictions = (await output.array())[0];
+
+    const threshold = 0.5;
+    const detectedBoxes = [];
+
+    for (const pred of predictions) {
+      const [x, y, w, h, objectness, ...classScores] = pred;
+      const classConfidence = Math.max(...classScores);
+      const classId = classScores.indexOf(classConfidence);
+      const score = objectness * classConfidence;
+
+      if (score > threshold) {
+        detectedBoxes.push({
+          box: [x, y, w, h],
+          score,
+          classId,
+        });
+      }
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const scaleX = canvas.width / 640;
+    const scaleY = canvas.height / 640;
+
+    detectedBoxes.forEach((det) => {
+      const [x, y, w, h] = det.box;
+      const x0 = x - w / 2;
+      const y0 = y - h / 2;
+
+      ctx.strokeStyle = 'red';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x0 * scaleX, y0 * scaleY, w * scaleX, h * scaleY);
+
+      ctx.fillStyle = 'red';
+      ctx.font = '16px Arial';
+      const label = `${labels[det.classId]} (${(det.score * 100).toFixed(1)}%)`;
+      ctx.fillText(label, x0 * scaleX + 4, y0 * scaleY + 18);
+    });
+
+    detectionResult.value =
+      detectedBoxes.length > 0
+        ? `Deteksi: ${detectedBoxes.length} objek`
+        : 'Tidak ada objek terdeteksi.';
+
+    tf.dispose([output, inputTensor]);
+  } catch (err) {
+    console.error('Error saat mendeteksi:', err);
   }
 
+  // detect next frame
+  detectLoopId = requestAnimationFrame(detectFrame);
+};
+
+onMounted(async () => {
   console.log('Loading model...');
   model = await tf.loadGraphModel('/models/tfjs_model/model.json');
   console.log('Model loaded.');
@@ -330,6 +381,6 @@ onBeforeUnmount(() => {
 });
 
 definePageMeta({
-  layout: 'secondary-layout',
+  layout: 'dashboard-layout',
 });
 </script>
