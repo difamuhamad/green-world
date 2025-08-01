@@ -8,7 +8,7 @@ defineProps<LayoutHeaderProps>();
 
 <template>
   <main>
-    <BasicHeader :title="title" :description="description" :sticky="sticky">
+    <BasicHeader :title="title" :description="description" class="mx-5">
       <template #actions>
         <slot name="actions" />
       </template>

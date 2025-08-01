@@ -3,10 +3,9 @@ import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
 const defaultIcon = icon({
   ...Icon.Default.prototype.options,
-  iconUrl:
-    'https://preview.redd.it/2yv5x9hto5f61.png?width=341&format=png&auto=webp&s=eccf34f646917d5a7c0196de5c2fc2e7ef3e2427',
+  iconUrl: '/images/vending-machine.png',
   shadowUrl: markerShadow,
-  iconSize: [35, 40],
+  iconSize: [40, 35],
 });
 
 const medan = marker([3.5952, 98.6722], { icon: defaultIcon }).bindPopup(
@@ -84,9 +83,6 @@ const ambon = marker([-3.695, 128.1814], { icon: defaultIcon }).bindPopup(
 const ternate = marker([0.7904, 127.384], { icon: defaultIcon }).bindPopup(
   'Ternate, Maluku Utara'
 );
-const jayapura = marker([-2.5337, 140.7181], { icon: defaultIcon }).bindPopup(
-  'Jayapura, Papua'
-);
 const manokwari = marker([-0.8615, 134.062], { icon: defaultIcon }).bindPopup(
   'Manokwari, Papua Barat'
 );
@@ -117,6 +113,5 @@ export const city = layerGroup([
   palu,
   ambon,
   ternate,
-  jayapura,
   manokwari,
 ]);

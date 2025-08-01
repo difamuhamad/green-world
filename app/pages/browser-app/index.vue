@@ -115,6 +115,7 @@ import { Mail, Lock, QrCode } from 'lucide-vue-next';
 import { Eye, EyeOff } from 'lucide-vue-next';
 import { useSupabase } from '../../composables/supabase';
 import type { SubmissionHandler } from 'vee-validate';
+import { restoreUserFromSupabase } from '~/lib/restore-user';
 
 interface LoginFormValues {
   email: string;
@@ -180,6 +181,7 @@ onMounted(async () => {
     } = await supabase.auth.getSession();
 
     if (session) {
+      await restoreUserFromSupabase();
       router.push('/browser-app/profile');
     }
   } catch (error) {

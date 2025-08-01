@@ -1,6 +1,6 @@
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import { city } from '../data/city';
-import type { Coordinate, PlaceNameResponse, Story } from '../types';
+import type { Coordinate, PlaceNameResponse, VendingMachine } from '../types';
 
 // Lazy-loaded leaflet
 let L: typeof import('leaflet') | undefined;
@@ -43,7 +43,7 @@ export default class IndonesiaMap {
     const center = this.options.center || DEFAULT_CENTER;
     const zoom = this.options.zoom || DEFAULT_ZOOM;
 
-    // Inisialisasi bounds (harus setelah leaflet siap)
+    // bound init first
     INDONESIA_BOUNDS = leaflet.latLngBounds(
       leaflet.latLng(-11.0, 94.0),
       leaflet.latLng(6.0, 141.0)
@@ -142,9 +142,7 @@ export default class IndonesiaMap {
   public createCustomIcon(options: Partial<L.IconOptions> = {}) {
     if (!L) throw new Error('Leaflet not loaded');
     return L.icon({
-      iconUrl:
-        'https://preview.redd.it/2yv5x9hto5f61.png?width=341&format=png&auto=webp&s=eccf34f646917d5a7c0196de5c2fc2e7ef3e2427',
-      shadowUrl: markerShadow,
+      iconUrl: '/images/vending-machine.png',
       iconSize: [35, 40],
       ...options,
     });
@@ -153,7 +151,8 @@ export default class IndonesiaMap {
   public addMarker(
     coordinates: [number, number],
     markerOptions: L.MarkerOptions = {},
-    popupOptions: L.PopupOptions | null = null
+    popupContent: string | HTMLElement | null = null,
+    popupOptions: Omit<L.PopupOptions, 'content'> = {}
   ): L.Marker | null {
     if (!this.map || !L) return null;
 
@@ -167,13 +166,13 @@ export default class IndonesiaMap {
       icon: this.createCustomIcon(),
       keyboard: false,
       ...markerOptions,
-    });
+    }).addTo(this.map);
 
-    if (popupOptions && popupOptions.content) {
-      marker.bindPopup(L.popup(popupOptions));
+    if (popupContent) {
+      const popup = L.popup(popupOptions).setContent(popupContent);
+      marker.bindPopup(popup);
     }
 
-    marker.addTo(this.map);
     return marker;
   }
 
@@ -207,11 +206,11 @@ export default class IndonesiaMap {
   }
 }
 
-export async function storyMapper(
-  story: Story,
+export async function VendingMachineMapper(
+  vendingMachine: VendingMachine,
   apiKey: string
 ): Promise<
-  Story & {
+  VendingMachine & {
     location: {
       latitude: number | null;
       longitude: number | null;
@@ -219,8 +218,8 @@ export async function storyMapper(
     };
   }
 > {
-  const lat = story.lat ?? null;
-  const lon = story.lon ?? null;
+  const lat = vendingMachine.latitude ?? null;
+  const lon = vendingMachine.longitude ?? null;
 
   let placeName = 'Location not found';
   if (lat !== null && lon !== null) {
@@ -228,7 +227,7 @@ export async function storyMapper(
   }
 
   return {
-    ...story,
+    ...vendingMachine,
     location: {
       latitude: lat,
       longitude: lon,

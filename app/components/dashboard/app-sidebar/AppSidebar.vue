@@ -1,3 +1,22 @@
+<template>
+  <Sidebar v-bind="props">
+    <SidebarHeader>
+      <div class="w-full h-full">
+        <img src="/images/navbar-logo.png" alt="green world" />
+      </div>
+      <!-- <TeamSwitcher :teams="data.teams" /> -->
+    </SidebarHeader>
+    <SidebarContent>
+      <NavMain :projects="data.projects" />
+      <!-- <NavOthers :items="data.navMain" /> -->
+    </SidebarContent>
+    <SidebarFooter>
+      <NavUser :user="adminStore" />
+    </SidebarFooter>
+    <SidebarRail />
+  </Sidebar>
+</template>
+
 <script setup lang="ts">
 import type { SidebarProps } from '../../ui/sidebar';
 
@@ -5,9 +24,10 @@ import {
   AudioWaveform,
   ChartNoAxesCombined,
   Command,
+  Focus,
   GalleryVerticalEnd,
   Map,
-  MapPin,
+  Refrigerator,
   Settings2,
   ShoppingBasket,
   Users,
@@ -22,9 +42,9 @@ import {
 } from '../../ui/sidebar';
 import NavOthers from './NavOthers.vue';
 import NavUser from './NavUser.vue';
-import TeamSwitcher from './TeamSwitcher.vue';
 import NavMain from './NavMain.vue';
 
+const adminStore = useAdminStore();
 const props = withDefaults(defineProps<SidebarProps>(), {
   collapsible: 'icon',
 });
@@ -81,13 +101,13 @@ const data = {
       icon: Map,
     },
     {
-      name: 'Vending Machine',
-      url: '#',
-      icon: MapPin,
+      name: 'RVM List',
+      url: '/browser-app/admin/dashboard/machines',
+      icon: Refrigerator,
     },
     {
       name: 'Point Store',
-      url: '#',
+      url: '/browser-app/admin/dashboard/point-store',
       icon: ShoppingBasket,
     },
     {
@@ -95,22 +115,11 @@ const data = {
       url: '/browser-app/admin/dashboard/users',
       icon: Users,
     },
+    {
+      name: 'Realtime Detector',
+      url: '/browser-app/admin/dashboard/detector',
+      icon: Focus,
+    },
   ],
 };
 </script>
-
-<template>
-  <Sidebar v-bind="props">
-    <SidebarHeader>
-      <TeamSwitcher :teams="data.teams" />
-    </SidebarHeader>
-    <SidebarContent>
-      <NavMain :projects="data.projects" />
-      <NavOthers :items="data.navMain" />
-    </SidebarContent>
-    <SidebarFooter>
-      <NavUser :user="data.user" />
-    </SidebarFooter>
-    <SidebarRail />
-  </Sidebar>
-</template>

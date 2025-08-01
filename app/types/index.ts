@@ -72,7 +72,8 @@ export interface Transaction {
   email: string;
   type: string;
   status: TransactionStatus;
-  amount: string;
+  amount: number;
+  points: number;
   created_at: string;
 }
 
@@ -160,12 +161,6 @@ export interface Coordinate {
   longitude: number;
 }
 
-export interface Story {
-  lat?: number | null;
-  lon?: number | null;
-  [key: string]: any;
-}
-
 export interface Coordinate {
   latitude: number;
   longitude: number;
@@ -182,4 +177,14 @@ export interface PlaceNameResponse {
     [key: string]: any;
   }[];
   attribution: string;
+}
+
+export interface VendingMachine {
+  id: number;
+  created_at: string;
+  machine_name: string;
+  province: string;
+  latitude: number | null;
+  longitude: number | null;
+  address: string;
 }
