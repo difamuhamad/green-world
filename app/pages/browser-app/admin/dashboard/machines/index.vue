@@ -11,7 +11,7 @@
         <form @submit.prevent="addMachine" class="space-y-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label for="machine-name">Machine Name</Label>
+              <Label class="mb-2" for="machine-name">Machine Name</Label>
               <Input
                 id="machine-name"
                 v-model="newMachine.machine_name"
@@ -19,16 +19,16 @@
               />
             </div>
             <div>
-              <Label for="province">Province</Label>
+              <Label class="mb-2" for="province">Province</Label>
               <Input id="province" v-model="newMachine.province" required />
             </div>
             <div>
-              <Label for="address">Address</Label>
+              <Label class="mb-2" for="address">Address</Label>
               <Input id="address" v-model="newMachine.address" required />
             </div>
             <div class="flex space-x-2">
               <div class="flex-1">
-                <Label for="latitude">Latitude</Label>
+                <Label class="mb-2" for="latitude">Latitude</Label>
                 <Input
                   id="latitude"
                   v-model="newMachine.latitude"
@@ -38,7 +38,7 @@
                 />
               </div>
               <div class="flex-1">
-                <Label for="longitude">Longitude</Label>
+                <Label class="mb-2" for="longitude">Longitude</Label>
                 <Input
                   id="longitude"
                   v-model="newMachine.longitude"

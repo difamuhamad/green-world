@@ -3,6 +3,15 @@ import type { FunctionalComponent } from 'vue';
 
 export type TransactionStatus = 'Sedang diproses' | 'Selesai' | 'Dibatalkan';
 
+export interface RegisterFormValues {
+  fullName: string;
+  email: string;
+  phone: string;
+  address: string;
+  password: string;
+  confirmPassword: string;
+}
+
 export interface LayoutHeaderProps {
   title: string;
   description: string;
@@ -72,7 +81,7 @@ export interface Transaction {
   email: string;
   type: string;
   status: TransactionStatus;
-  amount: number;
+  amount_kg: number;
   points: number;
   created_at: string;
 }

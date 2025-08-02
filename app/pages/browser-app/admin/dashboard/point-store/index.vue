@@ -11,7 +11,7 @@
         <form @submit.prevent="addReward" class="space-y-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label for="product-name">Product Name</Label>
+              <Label class="mb-2" for="product-name">Product Name</Label>
               <Input
                 id="product-name"
                 v-model="newReward.nama_produk"
@@ -19,7 +19,7 @@
               />
             </div>
             <div>
-              <Label for="point-price">Point Price</Label>
+              <Label class="mb-2" for="point-price">Point Price</Label>
               <Input
                 id="point-price"
                 v-model="newReward.point_price"
@@ -30,7 +30,7 @@
               />
             </div>
             <div class="md:col-span-2">
-              <Label for="image-url">Image URL</Label>
+              <Label class="mb-2" for="image-url">Image URL</Label>
               <Input
                 id="image-url"
                 v-model="newReward.image_url"

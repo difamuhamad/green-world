@@ -190,20 +190,10 @@ import { z } from 'zod';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { User, Mail, Phone, Home, Lock } from 'lucide-vue-next';
-import { useSupabase } from '../../composables/supabase';
 import type { SubmissionHandler } from 'vee-validate';
-
-interface RegisterFormValues {
-  fullName: string;
-  email: string;
-  phone: string;
-  address: string;
-  password: string;
-  confirmPassword: string;
-}
-
-// Supabase client
-const supabase = useSupabase();
+import { getUserBadge, formatDate } from '~/lib/utils';
+const supabase = useSupabaseClient();
+const userStore = useUserStore();
 
 // validation schema
 const schema = toTypedSchema(
@@ -219,8 +209,8 @@ const schema = toTypedSchema(
         .email({ message: 'Format email tidak valid' }),
       phone: z
         .string()
-        .min(10, { message: 'Nomor handphone minimal 10 digit' })
-        .max(15, { message: 'Nomor handphone maksimal 15 digit' })
+        .min(9, { message: 'Nomer Handphone tidak valid' })
+        .max(15, { message: 'Masukkan nomer handphone dengan benar' })
         .regex(/^[0-9]+$/, { message: 'Hanya boleh berisi angka' }),
       password: z.string().min(8, { message: 'Password minimal 8 karakter' }),
       confirmPassword: z.string(),
@@ -234,9 +224,7 @@ const schema = toTypedSchema(
 const isSubmitting = ref(false);
 const router = useRouter();
 
-const onSubmit = (async (values: any) => {
-  const formValues = values as RegisterFormValues;
-
+const onSubmit: SubmissionHandler = async (values) => {
   isSubmitting.value = true;
 
   try {
@@ -245,60 +233,68 @@ const onSubmit = (async (values: any) => {
       password: values.password,
     });
 
-    if (authError) {
-      throw authError;
-    }
+    if (authError) throw authError;
+    if (!authData.user) throw new Error('User data gagal signup');
 
-    if (!authData.user) {
-      throw new Error('User data not available after sign up');
-    }
+    // Save profile data
+    const { data: profileData, error: profileError } = await supabase
+      .from('user_profile')
+      .insert([
+        {
+          id: authData.user.id,
+          email: values.email,
+          full_name: values.fullName,
+          phone_number: values.phone,
+          address: values.address,
+          created_at: new Date().toISOString(),
+        },
+      ])
+      .select()
+      .single();
 
-    // Save Data to users Table
-    const { error: profileError } = await supabase.from('users').insert([
-      {
-        id: authData.user.id, // ID from auth
-        email: values.email,
-        full_name: values.fullName,
-        phone_number: formValues.phone,
-        address: formValues.address,
-        created_at: new Date().toISOString(),
-      },
-    ]);
+    if (profileError) throw profileError;
+    if (!profileData) throw new Error('Gagal menambahkan profile');
 
-    if (profileError) {
-      throw profileError;
-    }
+    //  Save user stats data
+    const { data: statsData, error: statsError } = await supabase
+      .from('user_data')
+      .insert([
+        {
+          id: profileData.id,
+          point: 0,
+          exp_level: 0,
+          total_weight: 0,
+        },
+      ])
+      .select()
+      .single();
 
-    // redirect after finish
+    if (statsError) throw statsError;
+    if (!statsData) throw new Error('Stats creation failed');
+
+    //  Update user store
+    userStore.setUser({
+      id: profileData.id,
+      nama: profileData.full_name,
+      email: profileData.email,
+      domisili: profileData.address || '',
+      join_year: formatDate(profileData.created_at),
+      badge: getUserBadge(statsData.exp_level) || '',
+      points: statsData.points || 0,
+    });
+
     router.push('/browser-app/profile');
   } catch (error: unknown) {
-    console.error('Error during registration:', error);
-    let errorMessage = 'Terjadi kesalahan saat registrasi';
-
-    if (error instanceof Error) {
-      errorMessage = error.message;
-    }
-
-    alert(`Registrasi gagal: ${errorMessage}`);
+    console.error('Registration error:', error);
+    alert(
+      `Registrasi gagal: ${
+        error instanceof Error ? error.message : 'Unknown error'
+      }`
+    );
   } finally {
     isSubmitting.value = false;
   }
-}) as SubmissionHandler;
-
-// redirect if the user is aleready loged in
-onMounted(async () => {
-  try {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (session) {
-      router.push('/browser-app/profile');
-    }
-  } catch (error) {
-    console.error('Error checking session:', error);
-  }
-});
+};
 
 definePageMeta({
   layout: 'secondary-layout',

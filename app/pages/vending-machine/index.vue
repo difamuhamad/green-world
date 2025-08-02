@@ -317,7 +317,7 @@ onMounted(async () => {
   } = await supabase.auth.getSession();
 
   if (!session) {
-    router.push('/browser-app/profile');
+    router.push('/browser-app');
   }
 
   console.log('Loading model...');

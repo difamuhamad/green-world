@@ -26,8 +26,8 @@
               <TableHead>Type</TableHead>
               <TableHead>User</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead class="text-right">Amount</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead class="text-right">Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -44,13 +44,11 @@
               <TableCell>
                 {{ transaction.date }}
               </TableCell>
-              <TableCell>
-                <Badge :variant="getStatusVariant(transaction.status)">
+              <TableCell> {{ transaction.amount }} kg </TableCell>
+              <TableCell class="text-right">
+                <Badge :class="getStatusClass(transaction.status)">
                   {{ transaction.status }}
                 </Badge>
-              </TableCell>
-              <TableCell class="text-right">
-                {{ transaction.amount }} kg
               </TableCell>
             </TableRow>
           </TableBody>
@@ -97,16 +95,16 @@ const statsData = ref<StatItem[]>([
   { label: 'Total Point', value: '+', icon: Coins },
 ]);
 
-const getStatusVariant = (status: TransactionStatus) => {
-  switch (status) {
-    case 'completed':
-      return 'default';
-    case 'pending':
-      return 'secondary';
-    case 'failed':
-      return 'destructive';
+const getStatusClass = (status: TransactionStatus) => {
+  switch (status.toLowerCase()) {
+    case 'dibatalkan':
+      return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+    case 'sedang diproses':
+      return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
+    case 'selesai':
+      return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
     default:
-      return 'outline';
+      return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
   }
 };
 
@@ -129,12 +127,12 @@ const fetchTransactionData = async () => {
           email: tx.email || 'unknown',
           date: formatDate(tx.created_at),
           status: (tx.status as TransactionStatus) || 'pending',
-          amount: tx.amount?.toFixed(1) || '0',
+          amount: tx.amount_kg || '0',
         }));
 
         // Calculate stats
         const totalAmount = data.reduce(
-          (sum: number, tx: Transaction) => sum + (Number(tx.amount) || 0),
+          (sum: number, tx: Transaction) => sum + (Number(tx.amount_kg) || 0),
           0
         );
         const totalPoints = data.reduce(
@@ -176,7 +174,7 @@ const fetchTransactionData = async () => {
           monthlyData[monthYear] = { recycle: 0, pickup: 0 };
         }
 
-        const amount = Number(tx.amount) || 0;
+        const amount = Number(tx.amount_kg) || 0;
         if (tx.type === 'Recycle') {
           monthlyData[monthYear].recycle += amount;
         } else if (tx.type === 'Pengangkutan Kiloan') {

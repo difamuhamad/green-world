@@ -178,9 +178,13 @@ onMounted(async () => {
   try {
     const {
       data: { session },
+      error,
     } = await supabase.auth.getSession();
 
-    if (session) {
+    if (error) throw error;
+
+    if (session?.access_token && session?.user) {
+      console.log('User authenticated, redirecting...');
       await restoreUserFromSupabase();
       router.push('/browser-app/profile');
     }
